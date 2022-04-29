@@ -38,7 +38,7 @@ namespace ArchiveApp
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            User.AuthUser = true; //ПОЗЖЕ УДАЛИТЬ
+            //User.AuthUser = true; //ПОЗЖЕ УДАЛИТЬ
             if (User.AuthUser == false) // Если пользователь не авторизован
             {
                 Form authForm = new Form2();
@@ -139,9 +139,10 @@ namespace ArchiveApp
             if (fontSize > 200 || fontSize == 0) fontSize = 14;
             if (font == "" || font == null) font = "Times New Roman";
             string name = AddFileDialog.SafeFileName;//Имя файла без пути
-            string query = "INSERT INTO `achrive` (id_user, title, filename, font, font_size, file) VALUES (@id_user, @title, @name, @font, @fontsize, @file);";
+            string query = "INSERT INTO `achrive` (id_user, title, filename, font, font_size, file) VALUES (@id_user, @id_city, @title, @name, @font, @fontsize, @file);";
             MySqlCommand cmd = new MySqlCommand(query, conn);// Обращение к БД
             cmd.Parameters.AddWithValue("@id_user", User.IdUser);
+            cmd.Parameters.AddWithValue("@id_city", User.IdUserCity);
             cmd.Parameters.AddWithValue("@title", name);
             cmd.Parameters.AddWithValue("@name", name);
             cmd.Parameters.AddWithValue("@font", font);
