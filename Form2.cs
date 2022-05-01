@@ -29,6 +29,7 @@ namespace ArchiveApp
                 db_state = false;
                 conn.Close();
             }
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
         }
 
         private void Button1_Click(object sender, EventArgs e)
@@ -59,6 +60,11 @@ namespace ArchiveApp
             {
                 MessageBox.Show("Ошибка! База данных не доступна. Обратитесть к системному администратору.");
             }
+        }
+
+        private void cueTextBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
