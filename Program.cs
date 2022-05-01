@@ -14,7 +14,9 @@ namespace ArchiveApp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new HelloForm());//Форма приветствия при запуске программы
             Application.Run(new Form1());
+
         }
 
     }

@@ -34,6 +34,8 @@ namespace ArchiveApp.Properties
         {
         }
 
+        public static int Destencilnf { get; internal set; }
+
         /// <summary>
         ///   Возврат кэшированного экземпляра ResourceManager, используемого этим классом.
         /// </summary>
