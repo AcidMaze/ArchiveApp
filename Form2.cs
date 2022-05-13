@@ -66,5 +66,33 @@ namespace ArchiveApp
         {
 
         }
+
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            switch (Form1.themeColor)
+            {
+                case 0:
+                {
+                    this.BackColor = Color.FromName("Window");
+                    button1.BackColor = Color.FromName("Window");
+                    button1.ForeColor = Color.FromName("ControlText");
+                    break;
+                }
+                case 1:
+                {
+                    this.BackColor = Color.FromArgb(41, 41, 41);
+                    button1.BackColor = Color.FromArgb(41, 41, 41);
+                    button1.ForeColor = Color.FromName("ControlLightLight");
+                    break;
+                }
+                default:
+                {
+                    this.BackColor = Color.FromName("Window");
+                    button1.BackColor = Color.FromName("Window");
+                    button1.ForeColor = Color.FromName("ControlText");
+                    break;
+                }
+            }
+        }
     }
 }

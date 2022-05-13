@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
 
 namespace ArchiveApp
 {
-  
+
     public partial class ViewDocument : Form
     {
 
@@ -21,14 +16,13 @@ namespace ArchiveApp
 
         private void ViewDocument_Load(object sender, EventArgs e)
         {
-            richTextBox1.Font = new Font(DocInf.docFont, DocInf.docFontsize);
-            richTextBox1.Text = DocInf.docText.ToString();
-        }
+            pictureBox1.Image = Image.FromStream(new MemoryStream(Convert.FromBase64String(DocInf.DocBase64)));
+            this.Text = "Просмотр документа - " + DocInf.DocTitle;
+         }
     }
     class DocInf
     {
-        static public string docFont { get; set; }
-        static public float docFontsize { get; set; }
-        static public string docText { get; set; }
+        static public string DocBase64 { get; set; }
+        static public string DocTitle { get; set; }
     }
 }

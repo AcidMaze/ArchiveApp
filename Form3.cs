@@ -40,7 +40,7 @@ namespace ArchiveApp
                 if (dataReader.HasRows)
                 {
                     dataReader.Read();
-                    this.Text = "Редактирование:" + dataReader.GetString(3);
+                    this.Text = "Редактирование: " + dataReader.GetString(3);
                     cueTextBox1.Text = dataReader.GetString(3);
                     dataReader.Close();
                 }
