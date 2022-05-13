@@ -10,14 +10,12 @@ using Microsoft.Office.Interop.Word;
 using Microsoft.Win32;
 using MySql.Conn;
 using MySql.Data.MySqlClient;
-//using Aspose.Words;
 
 namespace ArchiveApp
 {
     public partial class Form1 : Form
     {
         private bool db_state;
-        public static int IdAarch = -1; //Ид строки в БД
         public static int themeColor = 0;
         private MySqlConnection conn = DBUtils.GetDBConnection();
         public Form1()
@@ -85,7 +83,7 @@ namespace ArchiveApp
             if (db_state == true)
             {
                 MySqlDataReader dataReader;
-                string query = "SELECT * FROM `achrive`";
+                string query = "SELECT * FROM `docs`";
                 MySqlCommand cmd = new MySqlCommand(query, conn);// Обращение к БД
                 dataReader = cmd.ExecuteReader(); // Отправка запроса
                 if (dataReader.HasRows)
@@ -113,8 +111,8 @@ namespace ArchiveApp
             MySqlDataReader dataReader;
             string query;
             string[] statusText = { "Зарегестрированные", "На утверждении", "На исполнении" };
-            if (id_status == 0) query = "SELECT * FROM `achrive`"; // Выбран пункт все документы
-            else query = "SELECT * FROM `achrive` WHERE `status` = '" + id_status + "'"; //Отображение по статусу
+            if (id_status == 0) query = "SELECT * FROM `docs`"; // Выбран пункт все документы
+            else query = "SELECT * FROM `docs` WHERE `status` = '" + id_status + "'"; //Отображение по статусу
             MySqlCommand cmdAuth = new MySqlCommand(query, conn);
             dataReader = cmdAuth.ExecuteReader(); // Отправка запроса
             dataGridView1.Rows.Clear();
@@ -153,7 +151,8 @@ namespace ArchiveApp
         private void dataGridView1_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
             DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
-            IdAarch = Int32.Parse(row.Cells["id"].Value.ToString());
+            DocInf.DocID = Int32.Parse(row.Cells["id"].Value.ToString());
+            DocInf.DocTitle = row.Cells["title"].Value.ToString();
         }
 
         private void добавитьДокументToolStripMenuItem_Click(object sender, EventArgs e)
@@ -178,7 +177,15 @@ namespace ArchiveApp
             doc.ShowGrammaticalErrors = false;
             doc.ShowRevisions = false;
             doc.ShowSpellingErrors = false;
-
+            string query = "INSERT INTO `docs` (id_user, id_city, title, filename) VALUES (@id_user, @id_city, @title, @filename);";
+            MySqlCommand cmd = new MySqlCommand(query, conn);// Обращение к БД
+            cmd.Parameters.AddWithValue("@id_user", User.IdUser);
+            cmd.Parameters.AddWithValue("@id_city", User.IdUserCity);
+            cmd.Parameters.AddWithValue("@title", filename1);
+            cmd.Parameters.AddWithValue("@filename", filename1);
+            cmd.ExecuteNonQuery(); // Отправка запроса
+            cmd.CommandText = "SELECT LAST_INSERT_ID();";
+            int lastId = Convert.ToInt32(cmd.ExecuteScalar());
             foreach (Window window in doc.Windows)
             {
                 foreach (Pane pane in window.Panes)
@@ -199,25 +206,21 @@ namespace ArchiveApp
                                 Thread.Sleep(1);
                             }
                         }
-                        var bits = page.EnhMetaFileBits;
-                        var target = Path.Combine(startupPath + Path.DirectorySeparatorChar, string.Format("{1}_page_{0}", i, filename1.Split('.')[0]));
+                        string base64ImageRepresentation = Convert.ToBase64String((byte[])(page.EnhMetaFileBits));
+                        //var target = Path.Combine(startupPath + Path.DirectorySeparatorChar, string.Format("{1}_page_{0}", i, filename1.Split('.')[0]));
                         try
                         {
                             //using (var ms = new MemoryStream((byte[])(bits)))
                             //{
-                                string base64ImageRepresentation = Convert.ToBase64String((byte[])(bits));
-                                string query = "INSERT INTO `achrive` (id_user, id_city, title, filename, file) VALUES (@id_user, @id_city, @title, @filename, @file);";
-                                MySqlCommand cmd = new MySqlCommand(query, conn);// Обращение к БД
-                                cmd.Parameters.AddWithValue("@id_user", User.IdUser);
-                                cmd.Parameters.AddWithValue("@id_city", User.IdUserCity);
-                                cmd.Parameters.AddWithValue("@title", filename1);
-                                cmd.Parameters.AddWithValue("@filename", filename1);
-                                cmd.Parameters.AddWithValue("@file", base64ImageRepresentation);
-                                cmd.ExecuteNonQuery(); // Отправка запроса
-                                //var image = Image.FromStream(ms);
-                                //var pngTarget = Path.ChangeExtension(target, "png");
-
-                                ////image.Save(pngTarget, ImageFormat.Png);
+                            string qry = "INSERT INTO `doc_pages` (id_doc, page_num, page_file) VALUES (@id_doc, @page_num, @page_file);";
+                            MySqlCommand command = new MySqlCommand(qry, conn);// Обращение к БД
+                            command.Parameters.AddWithValue("@id_doc", lastId);
+                            command.Parameters.AddWithValue("@page_num", i);
+                            command.Parameters.AddWithValue("@page_file", base64ImageRepresentation);
+                            command.ExecuteNonQuery(); // Отправка запроса
+                            //var image = Image.FromStream(ms);
+                            //var pngTarget = Path.ChangeExtension(target, "png");
+                            ////image.Save(pngTarget, ImageFormat.Png);
                             //}
                         }
                         catch (Exception ex)
@@ -246,26 +249,8 @@ namespace ArchiveApp
         {
             if (db_state)
             {
-                MySqlDataReader dataReader;
-                string query = "SELECT * FROM `achrive` WHERE `id` = '" + IdAarch + "'";
-                MySqlCommand cmd = new MySqlCommand(query, conn);// Обращение к БД
-                dataReader = cmd.ExecuteReader(); // Отправка запроса
-                if (dataReader.HasRows)
-                {
-                    dataReader.Read();
-                    DocInf.DocTitle = dataReader.GetString(3);
-                    DocInf.DocBase64 = dataReader.GetString(5);
-                    Form ViewDocument = new ViewDocument();
-                    ViewDocument.ShowDialog();
-
-                }
-                else
-                {
-                    MessageBox.Show("Запись не найдена. Обратитесть к системному администратору.", "Закрыть");
-                    dataReader.Close();
-                }
-                dataReader.Close();
-
+                Form ViewDocument = new ViewDocument();
+                ViewDocument.ShowDialog();
             }
             else
             {
@@ -275,45 +260,7 @@ namespace ArchiveApp
 
         private void PrintDocument()
         {
-        //    if (db_state)
-        //    {
-        //        MySqlDataReader dataReader;
-        //        string query = "SELECT * FROM `achrive` WHERE `id` = '" + IdAarch + "'";
-        //        MySqlCommand cmd = new MySqlCommand(query, conn);// Обращение к БД
-        //        dataReader = cmd.ExecuteReader(); // Отправка запроса
-        //        if (dataReader.HasRows)
-        //        {
-        //            dataReader.Read();
-        //            Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
-        //            Document wordDoc = wordApp.Documents.Add();
-        //            Range content = wordDoc.Content;
-        //            content.Text = Base64Decode(dataReader.GetString(5));
-        //            content.Font.Name = dataReader.GetString(6);
-        //            content.Font.Size = dataReader.GetFloat(7);
-        //            wordApp.PrintPreview = true;
-        //            dataReader.Close();
-        //            //wordDoc.Close();
-        //            //wordApp.Quit();
-        //        }
-        //        else
-        //        {
-        //            MessageBox.Show("Запись не найдена. Обратитесть к системному администратору.", "Закрыть");
-        //            dataReader.Close();
-        //        }
-        //    }
-        //    else
-        //    {
-        //        MessageBox.Show("Ошибка! База данных не доступна. Обратитесть к системному администратору.", "Закрыть");
-        //    }
-        }
-
-        public static string Base64Encode(string plainText)
-        {
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes(plainText));
-        }
-        public static string Base64Decode(string base64EncodedData)
-        {
-            return Encoding.UTF8.GetString(Convert.FromBase64String(base64EncodedData));
+            //    
         }
 
         private void печатьToolStripMenuItem_Click(object sender, EventArgs e)
