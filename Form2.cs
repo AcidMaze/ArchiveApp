@@ -44,6 +44,7 @@ namespace ArchiveApp
                 {
                     dataReader.Read();
                     User.IdUser = dataReader.GetInt32(0);
+                    User.Name = dataReader.GetString(1);
                     User.IdUserCity = dataReader.GetInt32(4);
                     User.AuthUser = true; // Пользователь авторизован
                     dataReader.Close();

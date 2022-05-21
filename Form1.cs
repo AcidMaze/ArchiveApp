@@ -36,7 +36,7 @@ namespace ArchiveApp
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //User.AuthUser = true; //ПОЗЖЕ УДАЛИТЬ
+            User.AuthUser = true;
             if (User.AuthUser == false) // Если пользователь не авторизован
             {
                 Form authForm = new Form2();
@@ -49,11 +49,22 @@ namespace ArchiveApp
                     светлаяТемаToolStripMenuItem.Checked = true;
                     this.BackColor = Color.FromName("Window");
                     this.ForeColor = Color.FromName("ControlText");
+                    menuStrip1.BackColor = Color.FromName("Window");
+                    dataGridView1.BackgroundColor = Color.FromName("Window");
+                    dataGridView1.DefaultCellStyle.ForeColor = Color.FromName("ControlText");
+                    dataGridView1.DefaultCellStyle.SelectionForeColor = Color.FromName("ControlText");
+                    dataGridView1.DefaultCellStyle.BackColor = Color.FromName("Window");
+                    dataGridView1.DefaultCellStyle.SelectionBackColor = Color.FromName("GradientActiveCaption");
+                    dataGridView1.RowHeadersDefaultCellStyle.ForeColor = Color.FromName("ControlText");
+                    dataGridView1.RowHeadersDefaultCellStyle.SelectionForeColor = Color.FromName("ControlLightLight");
+                    dataGridView1.RowHeadersDefaultCellStyle.BackColor = Color.FromName("Window");
+                    dataGridView1.RowHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(15, 15, 15);
                     break;
                 }
                 case 1:
                 {
                     тёмнаяТемаToolStripMenuItem.Checked = true;
+                    menuStrip1.BackColor = Color.FromArgb(41, 41, 41);
                     this.BackColor = Color.FromArgb(41, 41, 41);
                     this.ForeColor = Color.FromName("ControlLightLight");
                     dataGridView1.BackgroundColor = Color.FromArgb(41, 41, 41);
@@ -65,8 +76,6 @@ namespace ArchiveApp
                     dataGridView1.RowHeadersDefaultCellStyle.SelectionForeColor = Color.FromName("ControlLightLight");
                     dataGridView1.RowHeadersDefaultCellStyle.BackColor = Color.FromArgb(41, 41, 41);
                     dataGridView1.RowHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(15, 15, 15);
-
-                    toolStrip1.BackColor = Color.FromArgb(41, 41, 41);
                     break;
                 }
                 default:
@@ -77,59 +86,11 @@ namespace ArchiveApp
                     break;
                 }
             }
+            label1.Text = User.Name;
         }
         private void Form1_Shown(object sender, EventArgs e)
         {
-            if (db_state == true)
-            {
-                MySqlDataReader dataReader;
-                string query = "SELECT * FROM `docs`";
-                MySqlCommand cmd = new MySqlCommand(query, conn);// Обращение к БД
-                dataReader = cmd.ExecuteReader(); // Отправка запроса
-                if (dataReader.HasRows)
-                {
-                    while (dataReader.Read())
-                    {
-                        dataGridView1.Rows.Add(
-                            dataReader["id"].ToString(),
-                            dataReader["title"].ToString(),
-                            dataReader["dateReg"].ToString(),
-                            dataReader["dateChange"].ToString()
-                        );
-                    }
-                }
-                dataReader.Close();
-            }
-            else
-            {
-                MessageBox.Show("Ошибка! База данных не доступна. Обратитесть к системному администратору.", "Закрыть");
-            }
-        }
-
-        private void SelectStatus(int id_status)
-        {
-            MySqlDataReader dataReader;
-            string query;
-            string[] statusText = { "Зарегестрированные", "На утверждении", "На исполнении" };
-            if (id_status == 0) query = "SELECT * FROM `docs`"; // Выбран пункт все документы
-            else query = "SELECT * FROM `docs` WHERE `status` = '" + id_status + "'"; //Отображение по статусу
-            MySqlCommand cmdAuth = new MySqlCommand(query, conn);
-            dataReader = cmdAuth.ExecuteReader(); // Отправка запроса
-            dataGridView1.Rows.Clear();
-            if (dataReader.HasRows)
-            {
-                while (dataReader.Read())
-                {
-                    dataGridView1.Rows.Add(
-                        dataReader["id"].ToString(),
-                        dataReader["title"].ToString(),
-                        dataReader["dateReg"].ToString(),
-                        dataReader["dateChange"].ToString(),
-                        dataReader["status"].ToString()
-                    );
-                }
-            }
-            dataReader.Close();
+            LoadDocs();
         }
 
         private void ToolStripMenuItem2_Click(object sender, EventArgs e)
@@ -141,11 +102,6 @@ namespace ArchiveApp
         private void ToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             ViewDocument();
-        }
-
-        private void ToolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            SelectStatus(Convert.ToInt32(e.ClickedItem.Tag));
         }
 
         private void dataGridView1_CellEnter(object sender, DataGridViewCellEventArgs e)
@@ -165,11 +121,12 @@ namespace ArchiveApp
             string fName = AddFileDialog.SafeFileName;
             string directoryPath = Path.GetDirectoryName(AddFileDialog.FileName);
             ConvertDocToPNG(directoryPath, fName);
+            
         }
 
         private void ConvertDocToPNG(string startupPath, string filename1)
         {
-            var docPath = Path.Combine(startupPath, filename1);
+            string docPath = Path.Combine(startupPath, filename1);
             Microsoft.Office.Interop.Word.Application app = new Microsoft.Office.Interop.Word.Application();
             Document doc = new Document();
             doc = app.Documents.Open(docPath);
@@ -279,6 +236,7 @@ namespace ArchiveApp
                 themeColor = 1;
                 светлаяТемаToolStripMenuItem.Checked = false;
                 тёмнаяТемаToolStripMenuItem.Checked = true;
+                Form1_Load(null, null);
             }
             myKey.Close();
 
@@ -293,8 +251,52 @@ namespace ArchiveApp
                 themeColor = 0;
                 тёмнаяТемаToolStripMenuItem.Checked = false;
                 светлаяТемаToolStripMenuItem.Checked = true;
+                Form1_Load(null, null);
             }
             myKey.Close();
         }
+
+        private void обновитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadDocs();
+        }
+
+        public void LoadDocs()
+        {
+            if (db_state == true)
+            {
+                MySqlDataReader dataReader;
+                string query = "SELECT * FROM `docs`";
+                MySqlCommand cmd = new MySqlCommand(query, conn);// Обращение к БД
+                dataReader = cmd.ExecuteReader(); // Отправка запроса
+                if (dataReader.HasRows)
+                {
+                    dataGridView1.Rows.Clear();
+                    while (dataReader.Read())
+                    {
+                        dataGridView1.Rows.Add(
+                            dataReader["id"].ToString(),
+                            dataReader["title"].ToString(),
+                            dataReader["id_city"].ToString(),
+                            dataReader["id_user"].ToString(),
+                            dataReader["dateReg"].ToString()
+                        );
+                    }
+                }
+                dataReader.Close();
+            }
+            else
+            {
+                MessageBox.Show("Ошибка! База данных не доступна. Обратитесть к системному администратору.", "Закрыть");
+            }
+        }
+
+
+
+        private void backgroundWorker1_DoWork_1(object sender, DoWorkEventArgs e)
+        {
+            //
+        }
+
     }
 }

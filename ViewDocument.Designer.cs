@@ -68,6 +68,7 @@
             this.pageNum.Text = "1";
             this.pageNum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.pageNum.TextChanged += new System.EventHandler(this.pageNum_TextChanged);
+            this.pageNum.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.pageNum_KeyPress);
             // 
             // btn_back
             // 
