@@ -33,22 +33,22 @@ namespace ArchiveApp
         {
             if (db_state)
             {
-                MySqlDataReader dataReader;
-                string query = "SELECT * FROM `achrive` WHERE `id` = '" + Form1.IdAarch + "'";
-                MySqlCommand cmd = new MySqlCommand(query, conn);// Обращение к БД
-                dataReader = cmd.ExecuteReader(); // Отправка запроса
-                if (dataReader.HasRows)
-                {
-                    dataReader.Read();
-                    this.Text = "Редактирование:" + dataReader.GetString(3);
-                    cueTextBox1.Text = dataReader.GetString(3);
-                    dataReader.Close();
-                }
-                else
-                {
-                    MessageBox.Show("Запись не найдена. Обратитесть к системному администратору.");
-                    dataReader.Close();
-                }
+                //MySqlDataReader dataReader;
+                //string query = "SELECT * FROM `achrive` WHERE `id` = '" + Form1.IdAarch + "'";
+                //MySqlCommand cmd = new MySqlCommand(query, conn);// Обращение к БД
+                //dataReader = cmd.ExecuteReader(); // Отправка запроса
+                //if (dataReader.HasRows)
+                //{
+                //    dataReader.Read();
+                //    this.Text = "Редактирование: " + dataReader.GetString(3);
+                //    cueTextBox1.Text = dataReader.GetString(3);
+                //    dataReader.Close();
+                //}
+                //else
+                //{
+                //    MessageBox.Show("Запись не найдена. Обратитесть к системному администратору.");
+                //    dataReader.Close();
+                //}
             }
             else
             {
@@ -62,15 +62,6 @@ namespace ArchiveApp
             e.KeyChar = (char)Keys.None; // Делаем список не доступным для редактирования
         }
   
-
-
-
-
-
-
-
-
-
 
 
 
