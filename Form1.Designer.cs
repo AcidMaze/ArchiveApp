@@ -47,8 +47,6 @@
             this.настройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.внешнийВидToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.тёмнаяToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.тёмнаяТемаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.светлаяТемаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AddFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.printDialog1 = new System.Windows.Forms.PrintDialog();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
@@ -82,14 +80,14 @@
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnKeystroke;
             this.dataGridView1.GridColor = System.Drawing.SystemColors.GrayText;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 94);
+            this.dataGridView1.Location = new System.Drawing.Point(0, 75);
             this.dataGridView1.Margin = new System.Windows.Forms.Padding(6);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(705, 352);
+            this.dataGridView1.Size = new System.Drawing.Size(705, 260);
             this.dataGridView1.TabIndex = 1;
             this.dataGridView1.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellEnter);
             // 
@@ -208,33 +206,14 @@
             this.внешнийВидToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.тёмнаяToolStripMenuItem});
             this.внешнийВидToolStripMenuItem.Name = "внешнийВидToolStripMenuItem";
-            this.внешнийВидToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.внешнийВидToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.внешнийВидToolStripMenuItem.Text = "Внешний вид";
             // 
             // тёмнаяToolStripMenuItem
             // 
-            this.тёмнаяToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.тёмнаяТемаToolStripMenuItem,
-            this.светлаяТемаToolStripMenuItem});
             this.тёмнаяToolStripMenuItem.Name = "тёмнаяToolStripMenuItem";
             this.тёмнаяToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.тёмнаяToolStripMenuItem.Text = "Интерфейс";
-            // 
-            // тёмнаяТемаToolStripMenuItem
-            // 
-            this.тёмнаяТемаToolStripMenuItem.CheckOnClick = true;
-            this.тёмнаяТемаToolStripMenuItem.Name = "тёмнаяТемаToolStripMenuItem";
-            this.тёмнаяТемаToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
-            this.тёмнаяТемаToolStripMenuItem.Text = "Тёмная тема";
-            this.тёмнаяТемаToolStripMenuItem.Click += new System.EventHandler(this.тёмнаяТемаToolStripMenuItem_Click);
-            // 
-            // светлаяТемаToolStripMenuItem
-            // 
-            this.светлаяТемаToolStripMenuItem.CheckOnClick = true;
-            this.светлаяТемаToolStripMenuItem.Name = "светлаяТемаToolStripMenuItem";
-            this.светлаяТемаToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
-            this.светлаяТемаToolStripMenuItem.Text = "Светлая тема";
-            this.светлаяТемаToolStripMenuItem.Click += new System.EventHandler(this.светлаяТемаToolStripMenuItem_Click);
             // 
             // AddFileDialog
             // 
@@ -261,9 +240,9 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button1.Location = new System.Drawing.Point(265, 39);
+            this.button1.Location = new System.Drawing.Point(266, 35);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 29);
+            this.button1.Size = new System.Drawing.Size(74, 31);
             this.button1.TabIndex = 7;
             this.button1.Text = "Поиск";
             this.button1.UseVisualStyleBackColor = true;
@@ -272,7 +251,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(12, 39);
+            this.label1.Location = new System.Drawing.Point(27, 45);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(41, 16);
             this.label1.TabIndex = 8;
@@ -291,7 +270,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(705, 446);
+            this.ClientSize = new System.Drawing.Size(705, 335);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.dateTimePicker1);
@@ -330,8 +309,6 @@
         private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem внешнийВидToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem тёмнаяToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem тёмнаяТемаToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem светлаяТемаToolStripMenuItem;
         private CueTextBox cueTextBox1;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.Button button1;

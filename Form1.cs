@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -16,8 +17,14 @@ namespace ArchiveApp
     public partial class Form1 : Form
     {
         private bool db_state;
-        public static int themeColor = 0;
         private MySqlConnection conn = DBUtils.GetDBConnection();
+        List<CityData> cityList = new List<CityData>(); //создали список
+        class CityData
+        {
+            public string Title { get; set; }
+        }
+  
+
         public Form1()
         {
             InitializeComponent();
@@ -36,61 +43,18 @@ namespace ArchiveApp
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            User.AuthUser = true;
+            //User.AuthUser = true;
             if (User.AuthUser == false) // Если пользователь не авторизован
             {
                 Form authForm = new Form2();
                 authForm.ShowDialog(); //Отобразить окно авторизации
             }
-            switch (themeColor)
-            {
-                case 0:
-                {
-                    светлаяТемаToolStripMenuItem.Checked = true;
-                    this.BackColor = Color.FromName("Window");
-                    this.ForeColor = Color.FromName("ControlText");
-                    menuStrip1.BackColor = Color.FromName("Window");
-                    dataGridView1.BackgroundColor = Color.FromName("Window");
-                    dataGridView1.DefaultCellStyle.ForeColor = Color.FromName("ControlText");
-                    dataGridView1.DefaultCellStyle.SelectionForeColor = Color.FromName("ControlText");
-                    dataGridView1.DefaultCellStyle.BackColor = Color.FromName("Window");
-                    dataGridView1.DefaultCellStyle.SelectionBackColor = Color.FromName("GradientActiveCaption");
-                    dataGridView1.RowHeadersDefaultCellStyle.ForeColor = Color.FromName("ControlText");
-                    dataGridView1.RowHeadersDefaultCellStyle.SelectionForeColor = Color.FromName("ControlLightLight");
-                    dataGridView1.RowHeadersDefaultCellStyle.BackColor = Color.FromName("Window");
-                    dataGridView1.RowHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(15, 15, 15);
-                    break;
-                }
-                case 1:
-                {
-                    тёмнаяТемаToolStripMenuItem.Checked = true;
-                    menuStrip1.BackColor = Color.FromArgb(41, 41, 41);
-                    this.BackColor = Color.FromArgb(41, 41, 41);
-                    this.ForeColor = Color.FromName("ControlLightLight");
-                    dataGridView1.BackgroundColor = Color.FromArgb(41, 41, 41);
-                    dataGridView1.DefaultCellStyle.ForeColor = Color.FromName("ControlLightLight");
-                    dataGridView1.DefaultCellStyle.SelectionForeColor = Color.FromName("ControlLightLight");
-                    dataGridView1.DefaultCellStyle.BackColor = Color.FromArgb(41, 41, 41);
-                    dataGridView1.DefaultCellStyle.SelectionBackColor = Color.FromArgb(15, 15, 15);
-                    dataGridView1.RowHeadersDefaultCellStyle.ForeColor = Color.FromName("ControlLightLight");
-                    dataGridView1.RowHeadersDefaultCellStyle.SelectionForeColor = Color.FromName("ControlLightLight");
-                    dataGridView1.RowHeadersDefaultCellStyle.BackColor = Color.FromArgb(41, 41, 41);
-                    dataGridView1.RowHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(15, 15, 15);
-                    break;
-                }
-                default:
-                {
-                    светлаяТемаToolStripMenuItem.Checked = true;
-                    this.BackColor = Color.FromName("Window");
-                    this.ForeColor = Color.FromName("ControlText");
-                    break;
-                }
-            }
             label1.Text = User.Name;
         }
         private void Form1_Shown(object sender, EventArgs e)
         {
-            LoadDocs();
+            LoadCity();
+            UpdateDocs();
         }
 
         private void ToolStripMenuItem2_Click(object sender, EventArgs e)
@@ -200,6 +164,7 @@ namespace ArchiveApp
             Marshal.ReleaseComObject(app);
             app = null;
             GC.Collect();
+            UpdateDocs();
         }
 
         private void ViewDocument()
@@ -219,54 +184,51 @@ namespace ArchiveApp
         {
             //    
         }
+        
 
         private void печатьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PrintDocument();
         }
 
-        private void тёмнаяТемаToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-            RegistryKey myKey = Registry.CurrentUser;
-            RegistryKey wKey = myKey.OpenSubKey(@"Software\FileTronic",true);
-            if (wKey != null)
-            {
-                wKey.SetValue("theme", 1);// Устанавливаем переменную темной темы
-                themeColor = 1;
-                светлаяТемаToolStripMenuItem.Checked = false;
-                тёмнаяТемаToolStripMenuItem.Checked = true;
-                Form1_Load(null, null);
-            }
-            myKey.Close();
-
-        }
-        private void светлаяТемаToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            RegistryKey myKey = Registry.CurrentUser;
-            RegistryKey wKey = myKey.OpenSubKey(@"Software\FileTronic", true);
-            if (wKey != null)
-            {
-                wKey.SetValue("theme", 0);// Устанавливаем переменную светлой темы
-                themeColor = 0;
-                тёмнаяТемаToolStripMenuItem.Checked = false;
-                светлаяТемаToolStripMenuItem.Checked = true;
-                Form1_Load(null, null);
-            }
-            myKey.Close();
-        }
-
         private void обновитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            LoadDocs();
+            UpdateDocs();
         }
 
-        public void LoadDocs()
+        private void LoadCity()
+        {
+            if (db_state == true)
+            {
+                MySqlDataReader dataReader;
+                string query = "SELECT * FROM `city`";
+                MySqlCommand cmd = new MySqlCommand(query, conn);// Обращение к БД
+                dataReader = cmd.ExecuteReader(); // Отправка запроса
+                if (dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        CityData city = new CityData(); //создаем один экземпляр
+                        city.Title = (dataReader[1].ToString());
+                        cityList.Add(city); //добавляем в список
+                    }
+
+                }
+                dataReader.Close();
+            }
+            else
+            {
+                MessageBox.Show("Ошибка! База данных не доступна. Обратитесть к системному администратору.", "Закрыть");
+            }
+        }
+        public void UpdateDocs()
         {
             if (db_state == true)
             {
                 MySqlDataReader dataReader;
                 string query = "SELECT * FROM `docs`";
+                string title;
+                int cityid;
                 MySqlCommand cmd = new MySqlCommand(query, conn);// Обращение к БД
                 dataReader = cmd.ExecuteReader(); // Отправка запроса
                 if (dataReader.HasRows)
@@ -274,14 +236,24 @@ namespace ArchiveApp
                     dataGridView1.Rows.Clear();
                     while (dataReader.Read())
                     {
+                        cityid = Convert.ToInt32(dataReader["id_city"]);
+                        if (cityid != 0)
+                        {
+                            title = cityList[cityid-1].Title; // Получаем название населённого пункта;
+                        }
+                        else
+                        {
+                            title = "Не определён";
+                        }
                         dataGridView1.Rows.Add(
                             dataReader["id"].ToString(),
                             dataReader["title"].ToString(),
-                            dataReader["id_city"].ToString(),
+                            title,
                             dataReader["id_user"].ToString(),
                             dataReader["dateReg"].ToString()
                         );
                     }
+
                 }
                 dataReader.Close();
             }
@@ -297,6 +269,7 @@ namespace ArchiveApp
         {
             //
         }
-
     }
+
+ 
 }

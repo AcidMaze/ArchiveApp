@@ -46,6 +46,7 @@ namespace ArchiveApp
             {
                 dataReader.Read();
                 pictureBox1.Image = Image.FromStream(new MemoryStream(Convert.FromBase64String(dataReader.GetString(3))));
+                pictureBox1.Left = ClientSize.Width / 2 - pictureBox1.Width / 2;
                 conn.Close();
             }
             else
@@ -81,6 +82,48 @@ namespace ArchiveApp
             {
                 e.Handled = true;
             }
+        }
+
+        private void ViewDocument_Resize(object sender, EventArgs e)
+        {
+            pictureBox1.Size = new Size(ClientSize.Width / 2, ClientSize.Height);
+            pictureBox1.Left = ClientSize.Width / 2 - pictureBox1.Width / 2;
+            pictureBox1.Top = ClientSize.Height / 2 - pictureBox1.Height / 2;
+            panel1.Left = ClientSize.Width / 2 - panel1.Width / 2;
+        }
+
+        private void pNGToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.ShowDialog();
+        }
+
+        private void saveFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            //conn.Open();
+            //MySqlDataReader dataReader;
+            //string query = "SELECT * FROM `doc_pages` WHERE `id_doc` = '" + DocInf.DocID + "' AND `page_num` = '" + page + "' LIMIT 1";
+            //MySqlCommand cmd = new MySqlCommand(query, conn);// Обращение к БД
+            //dataReader = cmd.ExecuteReader(); // Отправка запроса
+            //if (dataReader.HasRows)
+            //{
+            //    dataReader.Read();
+            //    MemoryStream stream = new MemoryStream(Convert.FromBase64String(dataReader.GetString(3)));
+            //    var fileStream = File.Create();
+            //    stream.InputStream.Seek(0, SeekOrigin.Begin);
+            //    stream.InputStream.CopyTo(fileStream);
+            //    fileStream.Close();
+
+            //    pictureBox1.Image = Image.FromStream(new MemoryStream(Convert.FromBase64String(dataReader.GetString(3))));
+            //    conn.Close();
+            //}
+            //else
+            //{
+            //    MessageBox.Show("Такой страницы не существует.", "Закрыть");
+            //    dataReader.Close();
+            //    conn.Close();
+            //}
+            //conn.Close();
+            //dataReader.Close();
         }
     }
     class DocInf

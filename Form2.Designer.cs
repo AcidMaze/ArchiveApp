@@ -80,7 +80,6 @@
             this.cueTextBox1.Name = "cueTextBox1";
             this.cueTextBox1.Size = new System.Drawing.Size(193, 27);
             this.cueTextBox1.TabIndex = 7;
-            this.cueTextBox1.TextChanged += new System.EventHandler(this.cueTextBox1_TextChanged);
             // 
             // Form2
             // 

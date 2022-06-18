@@ -10,31 +10,7 @@ namespace ArchiveApp
         public HelloForm()
         {
             InitializeComponent();
-            //-------- Читаем реестре при запуске программы -------
-            RegistryKey myKey = Registry.CurrentUser; //Открываем рестр текущего пользователя для записи
-            RegistryKey wKey = myKey.OpenSubKey(@"Software\FileTronic");
-            if (wKey != null)
-            {
-                int theme = Convert.ToInt32(wKey.GetValue("theme"));
-                Form1.themeColor = theme;
-                if (theme == 0)
-                {
-                    this.BackColor = Color.FromName("Window");
-                    pictureBox1.Image = Properties.Resources.load_anim_2;
-                }
-                else
-                {
-                    pictureBox1.Image = Properties.Resources.load_anim_1;
-                }
-                myKey.Close();
-            }
-            else
-            {
-                RegistryKey heyKey = myKey.OpenSubKey("Software", true);
-                RegistryKey newKey = heyKey.CreateSubKey("FileTronic");
-                newKey.SetValue("theme", 0);
-                myKey.Close();
-            }
+              
             //------------------------------------------------------------------
         }
         private void timer1_Tick(object sender, EventArgs e)
